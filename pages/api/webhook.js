@@ -1,17 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   try {
     const payload = req.body;
-
-    // Enplug sends an array of device events
     const events = Array.isArray(payload) ? payload : [payload];
 
     const rows = events.map(event => ({
@@ -24,10 +15,23 @@ export default async function handler(req, res) {
       payload: event,
     }));
 
-    const { error } = await supabase.from('device_events').insert(rows);
+    const response = await fetch(
+      `${process.env.SUPABASE_URL}/rest/v1/device_events`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': process.env.SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_KEY}`,
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify(rows),
+      }
+    );
 
-    if (error) {
-      console.error('Supabase insert error:', error);
+    if (!response.ok) {
+      const err = await response.text();
+      console.error('Supabase error:', err);
       return res.status(500).json({ error: 'Database error' });
     }
 

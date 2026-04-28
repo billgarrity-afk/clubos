@@ -96,8 +96,8 @@ async function handleAudit(supabaseUrl, headers, res) {
   const audit = await auditRes.json();
 
   const summaryRes = await fetch(
-    `${supabaseUrl}/rest/v1/spectrio_snapshots?select=snapshot_month,status&order=snapshot_month.asc`,
-    { headers }
+    `${supabaseUrl}/rest/v1/spectrio_snapshots?select=snapshot_month,status&order=snapshot_month.asc&limit=10000`,
+    { headers: { ...headers, Range: '0-9999' } }
   );
   if (!summaryRes.ok) throw new Error(`spectrio_snapshots: ${summaryRes.status} ${await summaryRes.text()}`);
   const allSnapRows = await summaryRes.json();

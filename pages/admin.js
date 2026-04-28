@@ -235,11 +235,11 @@ export default function Admin() {
                       <Td align="right" color={days > 7 ? colors.red : days > 3 ? colors.gold : colors.text} weight={600}>{days}</Td>
                       <Td color={colors.textDim}>{fmtDate(d.last_event_at)}</Td>
                       <Td align="right">
-                        {enplugLink && (
-                          <a href={enplugLink} target="_blank" rel="noopener" style={{ color: colors.gold, fontSize: 12, textDecoration: 'none' }}>
-                            Enplug ↗
-                          </a>
-                        )}
+                      {enplugLink && (
+  <a href={enplugLink} target="_blank" rel="noopener" style={{ color: colors.gold, fontSize: 11, textDecoration: 'none', fontFamily: 'monospace' }} title={d.device_id}>
+    {d.device_id?.slice(-8)} ↗
+  </a>
+)}
                       </Td>
                     </tr>
                   );
